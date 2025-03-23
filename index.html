@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Terminal</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- xterm.js CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/xterm@5.1.0/css/xterm.css" />
+    
+    <!-- Our custom CSS -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <h1>Web Terminal</h1>
+
+    <!-- Connection form -->
+    <div class="connection-form-container">
+      <form id="connectionForm" class="connection-form">
+        <div class="form-group host">
+          <label for="host">Host</label>
+          <input type="text" id="host" value="time.nist.gov" />
+        </div>
+        
+        <div class="form-group port">
+          <label for="port">Port</label>
+          <input type="text" id="port" value="13" />
+        </div>
+
+        <div class="form-group port">
+          <label for="proxyPort">Proxy Port</label>
+          <input type="text" id="proxyPort" value="8123" />
+        </div>
+        
+        <div class="button-container">
+          <button type="submit" id="connectBtn" class="connect-btn">
+            Connect
+          </button>
+        </div>
+        
+        <div class="button-container right">
+          <button type="button" id="disconnectBtn" class="disconnect-btn" disabled>
+            Disconnect
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Connection status -->
+    <div id="statusBar" class="status-bar">
+      <div id="status" class="status">Disconnected</div>
+      <div id="targetDisplay" class="target-display"></div>
+    </div>
+
+    <!-- Command input -->
+    <div id="commandInputContainer" class="command-input-container" style="display: none;">
+      <input 
+        type="text" 
+        id="commandInput" 
+        class="command-input"
+        placeholder="Enter command (press Enter to send)"
+      />
+      <button 
+        id="sendBtn" 
+        class="send-btn"
+      >
+        Send
+      </button>
+    </div>
+
+    <!-- Terminal container with a click indicator -->
+    <div class="terminal-container">
+      <div
+        id="terminal"
+        class="terminal"
+      ></div>
+      <div id="clickIndicator" class="click-indicator" style="display: none;">
+        Click to focus terminal
+      </div>
+    </div>
+
+    <!-- xterm.js -->
+    <script src="https://unpkg.com/xterm@5.1.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
+
+    <!-- Modular JavaScript -->
+    <script src="js/terminal-config.js"></script>
+    <script src="js/elements.js"></script>
+    <script src="js/terminal.js"></script>
+    <script src="js/websocket.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
