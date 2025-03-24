@@ -1,4 +1,4 @@
-// events.js - Event handling
+// js/events.js - Event handling
 
 // Setup all event listeners
 function setupEventListeners() {

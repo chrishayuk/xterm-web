@@ -1,4 +1,4 @@
-// elements.js - DOM element references
+// js/elements.js - DOM element references
 
 // Form elements
 const Elements = {

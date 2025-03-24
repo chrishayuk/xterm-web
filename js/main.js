@@ -1,4 +1,4 @@
-// main.js - Application initialization
+// js/main.js - Application initialization
 
 // Initialize the application
 function initApp() {

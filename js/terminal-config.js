@@ -1,4 +1,4 @@
-// config.js - Terminal configuration settings
+// js/config.js - Terminal configuration settings
 const TerminalConfig = {
     theme: {
       background: '#000000',
