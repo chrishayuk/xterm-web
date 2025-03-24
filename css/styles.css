@@ -226,3 +226,149 @@ html {
     font-size: 0.875rem;
     color: #9ca3af; /* text-gray-400 */
   }
+
+/* Terminal mode selector */
+.terminal-mode-container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.selector-label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.terminal-mode-selector {
+  padding: 5px 10px;
+  background: #333;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+/* Buffer display */
+.buffer-display {
+  font-family: monospace;
+  padding: 5px 10px;
+  margin-top: 5px;
+  background-color: #333;
+  color: #fff;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.buffer-display.focused {
+  border-left: 3px solid #4CAF50;
+}
+
+.buffer-label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.buffer-content {
+  font-family: monospace;
+}
+
+.buffer-size {
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+
+/* Notification styles */
+.terminal-notification {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 4px;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.5s;
+}
+
+/* Debug toggle */
+.debug-container {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 15px;
+  padding: 3px 8px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+}
+
+.debug-label {
+  margin-left: 5px;
+  font-size: 0.9em;
+}
+
+/* Local echo toggle improvements */
+.echo-container {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 3px 8px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+}
+
+.echo-label {
+  margin-left: 5px;
+  font-size: 0.9em;
+}
+
+/* Keyboard shortcuts */
+.keyboard-shortcuts {
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.shortcut-item {
+  margin-bottom: 5px;
+}
+
+.shortcut-toggle {
+  font-size: 0.9em;
+  text-align: right;
+  margin: 5px 0;
+}
+
+/* Improve terminal focus indicator */
+#terminal:focus-within {
+  outline: 2px solid #4CAF50;
+  outline-offset: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .terminal-mode-container,
+  .echo-container,
+  .debug-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .selector-label,
+  .echo-label,
+  .debug-label {
+    margin-bottom: 5px;
+  }
+  
+  .keyboard-shortcuts {
+    font-size: 12px;
+  }
+  
+  .shortcut-item {
+    display: block;
+    margin-bottom: 8px;
+  }
+}
