@@ -1,4 +1,4 @@
-// js/main.js - Application initialization
+// js/main.js - Updated application initialization
 
 /**
  * Initialize the application
@@ -11,6 +11,11 @@ function initApp() {
   
   // Create echo toggle UI
   createEchoToggle();
+  
+  // Create direct connection toggle
+  if (typeof createDirectConnectionToggle === 'function') {
+    createDirectConnectionToggle();
+  }
   
   // Initialize terminal
   initTerminal();
@@ -32,7 +37,8 @@ function initApp() {
   console.log("Web Terminal initialized with configuration:", {
     defaultLineMode: AppState.lineMode,
     debugMode: AppState.debugMode,
-    terminalConfig: TerminalConfig
+    terminalConfig: TerminalConfig,
+    supportsDirectConnection: typeof createDirectConnectionToggle === 'function'
   });
 }
 

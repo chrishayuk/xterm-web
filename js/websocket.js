@@ -1,4 +1,4 @@
-// js/websocket.js - WebSocket connection handling with binary data support
+// js/websocket.js - WebSocket connection handling with multi-server support
 
 // Connection tracking variables
 let connectionTimer = null;
@@ -14,6 +14,10 @@ function connectToWebSocket(isReconnect = false) {
     const host = isReconnect ? AppState.lastHost : Elements.hostInput.value.trim();
     const port = isReconnect ? AppState.lastPort : Elements.portInput.value.trim();
     const proxyPort = isReconnect ? AppState.lastProxyPort : Elements.proxyPortInput.value.trim();
+    const useDirectConnection = isReconnect ? AppState.lastUseDirectConnection : 
+                              Elements.directConnectionCheckbox ? Elements.directConnectionCheckbox.checked : false;
+    const wsPath = isReconnect ? AppState.lastWsPath : 
+                  Elements.wsPathInput ? Elements.wsPathInput.value.trim() : '/ws';
     
     // Validate inputs
     if (!host || !port) {
@@ -25,14 +29,24 @@ function connectToWebSocket(isReconnect = false) {
     AppState.lastHost = host;
     AppState.lastPort = port;
     AppState.lastProxyPort = proxyPort;
+    AppState.lastUseDirectConnection = useDirectConnection;
+    AppState.lastWsPath = wsPath;
     
-    // Construct the WebSocket URL including the target query parameter
-    const wsUrl = `ws://localhost:${proxyPort}/?target=${encodeURIComponent(host + ":" + port)}`;
-    console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} to:`, wsUrl);
+    // Construct the WebSocket URL based on connection mode
+    let wsUrl;
+    if (useDirectConnection) {
+      // Direct connection to server's WebSocket endpoint
+      wsUrl = `ws://${host}:${port}${wsPath}`;
+      console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} directly to:`, wsUrl);
+    } else {
+      // Connection through WebSocket proxy
+      wsUrl = `ws://localhost:${proxyPort}/?target=${encodeURIComponent(host + ":" + port)}`;
+      console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} via proxy to:`, wsUrl);
+    }
     
     // Update UI
     updateStatus(`${isReconnect ? 'Reconnecting' : 'Connecting'}...`, 'connecting');
-    Elements.targetDisplay.textContent = `${host}:${port}`;
+    Elements.targetDisplay.textContent = `${host}:${port}${useDirectConnection ? ` (direct${wsPath})` : ' (via proxy)'}`;
     
     // Always clear terminal on connect/reconnect
     term.clear();
@@ -161,6 +175,15 @@ function handleSocketClose(event) {
     
     // Try to reconnect if it was an abnormal closure
     if (event.code !== 1000 && event.code !== 1001) {
+      // Show error message for specific error codes
+      if (event.code === 1003 && event.reason.includes('Invalid path')) {
+        updateStatus(`Error: ${event.reason}. Check your WebSocket path.`, 'error');
+        showNotification(`WebSocket path error: ${event.reason}`, 'error');
+        
+        // Don't auto-reconnect on path errors
+        return;
+      }
+      
       handleReconnect();
     }
   }
@@ -280,8 +303,8 @@ function disconnectFromWebSocket() {
     reconnectTimer = null;
   }
   
-  // Reset reconnect attempts
-  AppState.reconnectAttempts = 0;
+  // Reset reconnect attempts and set to max to prevent auto-reconnects
+  AppState.reconnectAttempts = AppState.maxReconnectAttempts;
   
   // Close socket if open
   if (AppState.socket) {

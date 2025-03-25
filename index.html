@@ -28,7 +28,7 @@
         
         <div class="form-group port">
           <label for="port">Port</label>
-          <input type="text" id="port" value="8023" />
+          <input type="text" id="port" value="8025" />
         </div>
 
         <div class="form-group port">
@@ -36,6 +36,12 @@
           <input type="text" id="proxyPort" value="8123" />
         </div>
         
+        <div class="form-group ws-path" style="display: none;">
+          <label for="wsPath">WebSocket Path</label>
+          <input type="text" id="wsPath" value="/stocks" />
+        </div>
+        
+        <!-- Connection mode toggle will be inserted here by JS -->
         <!-- Force Telnet Mode checkbox will be inserted here by JS -->
         
         <div class="button-container">
@@ -106,6 +112,7 @@
     <script src="js/manual-telnet.js"></script>
     <script src="js/telnet-diagnostics.js"></script>
     <script src="js/events.js"></script>
+    <script src="js/connection-mode.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

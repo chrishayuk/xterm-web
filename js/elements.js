@@ -1,4 +1,4 @@
-// js/elements.js - DOM element references
+// js/elements.js - DOM element references with WebSocket path support
 
 // Form elements
 const Elements = {
@@ -6,6 +6,7 @@ const Elements = {
   hostInput: document.getElementById('host'),
   portInput: document.getElementById('port'),
   proxyPortInput: document.getElementById('proxyPort'),
+  wsPathInput: document.getElementById('wsPath'),
   connectBtn: document.getElementById('connectBtn'),
   disconnectBtn: document.getElementById('disconnectBtn'),
   connectionForm: document.getElementById('connectionForm'),
@@ -26,6 +27,8 @@ const Elements = {
   // Additional properties that will be added dynamically
   localEchoCheckbox: null,
   echoContainer: null,
+  directConnectionCheckbox: null,
+  directConnectionContainer: null,
   terminalModeSelector: null,
   bufferDisplay: null,
   debugToggle: null,
@@ -40,7 +43,9 @@ if (!window.AppState) {
     socket: null,
     isConnected: false,
     terminalFocused: false,
-    debugMode: false
+    debugMode: false,
+    useDirectConnection: false,
+    lastWsPath: '/stocks'
   };
 }
 
@@ -88,7 +93,8 @@ function createEchoToggle() {
  */
 function resetDynamicElements() {
   // Remove any existing dynamic elements
-  ['echoContainer', 'bufferDisplay', 'debugContainer', 'shortcutGuide', 'shortcutToggle'].forEach(elementKey => {
+  ['echoContainer', 'bufferDisplay', 'debugContainer', 'shortcutGuide', 
+   'shortcutToggle', 'directConnectionContainer'].forEach(elementKey => {
     if (Elements[elementKey] && Elements[elementKey].parentNode) {
       Elements[elementKey].parentNode.removeChild(Elements[elementKey]);
       Elements[elementKey] = null;
