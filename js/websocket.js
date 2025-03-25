@@ -1,4 +1,4 @@
-// js/websocket.js - WebSocket connection handling without auto-detection
+// js/websocket.js - WebSocket connection handling with binary data support
 
 // Connection tracking variables
 let connectionTimer = null;
@@ -58,6 +58,10 @@ function connectToWebSocket(isReconnect = false) {
     // Create WebSocket connection
     try {
       AppState.socket = new WebSocket(wsUrl);
+      
+      // Configure WebSocket for binary data
+      AppState.socket.binaryType = 'arraybuffer';
+      console.log("WebSocket created with binary type: arraybuffer");
       
       // Set connection timeout
       connectionTimer = setTimeout(() => {
@@ -177,12 +181,65 @@ function handleSocketClose(event) {
  */
 function handleSocketMessage(e) {
   try {
-    console.log("Received data from WebSocket");
+    // Log received data type for debugging
+    if (e.data instanceof ArrayBuffer) {
+      const bytes = new Uint8Array(e.data);
+      console.log(`Received binary data from WebSocket (${bytes.length} bytes)`);
+      
+      // Check if there might be telnet commands for debugging
+      let hasIAC = false;
+      for (let i = 0; i < bytes.length; i++) {
+        if (bytes[i] === 255) { // IAC byte
+          hasIAC = true;
+          break;
+        }
+      }
+      
+      if (hasIAC && bytes.length >= 3) {
+        console.log("Data contains possible telnet commands:", Array.from(bytes.slice(0, Math.min(20, bytes.length))));
+      }
+    } else {
+      console.log(`Received text data from WebSocket: ${e.data.substring(0, 50)}${e.data.length > 50 ? '...' : ''}`);
+    }
     
-    // Write to terminal
-    term.write(e.data);
+    // The actual message handling is delegated to telnet-integration.js
+    // which has overridden the global handleSocketMessage function
+    // But we'll write to terminal directly here as a fallback
+    if (!window.handleSocketMessageWithTelnet) {
+      console.log("Using fallback message handler");
+      term.write(e.data);
+    }
   } catch (error) {
     console.error("Error handling message:", error);
+  }
+}
+
+/**
+ * Send data to WebSocket with format conversion if needed
+ * @param {string|Uint8Array|ArrayBuffer} data The data to send
+ * @return {boolean} Success or failure
+ */
+function sendToSocket(data) {
+  try {
+    if (AppState.socket && AppState.socket.readyState === WebSocket.OPEN) {
+      // If data is a string, convert to binary for telnet
+      if (typeof data === 'string') {
+        console.log(`Sending text data: ${data.length <= 50 ? data : data.substring(0, 50) + '...'}`);
+      } else if (data instanceof Uint8Array) {
+        console.log(`Sending binary data (${data.length} bytes)`);
+      } else if (data instanceof ArrayBuffer) {
+        console.log(`Sending ArrayBuffer (${data.byteLength} bytes)`);
+      }
+      
+      // Send as-is - the telnet-integration.js module will override this function
+      // with one that has proper telnet protocol handling
+      AppState.socket.send(data);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error("Error sending to WebSocket:", error);
+    return false;
   }
 }
 

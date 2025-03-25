@@ -51,3 +51,68 @@ function setupEventListeners() {
       }
     });
   }
+
+/**
+ * Add event handler for manual telnet connection
+ */
+function setupTelnetEventHandlers() {
+  // Add a button to force telnet mode when connecting
+  const forceTelnetCheckbox = document.createElement('input');
+  forceTelnetCheckbox.type = 'checkbox';
+  forceTelnetCheckbox.id = 'forceTelnetMode';
+  forceTelnetCheckbox.checked = false;
+  
+  const forceTelnetLabel = document.createElement('label');
+  forceTelnetLabel.htmlFor = 'forceTelnetMode';
+  forceTelnetLabel.textContent = 'Force Telnet Mode';
+  
+  const forceTelnetContainer = document.createElement('div');
+  forceTelnetContainer.className = 'telnet-force-container';
+  forceTelnetContainer.style.margin = '10px 0';
+  forceTelnetContainer.appendChild(forceTelnetCheckbox);
+  forceTelnetContainer.appendChild(forceTelnetLabel);
+  
+  // Insert before the connect button
+  const connectionForm = document.getElementById('connectionForm');
+  const connectBtn = document.getElementById('connectBtn');
+  if (connectionForm && connectBtn) {
+    const container = connectBtn.parentNode;
+    connectionForm.insertBefore(forceTelnetContainer, container);
+  }
+  
+  // Store in Elements for access
+  if (typeof Elements !== 'undefined') {
+    Elements.forceTelnetCheckbox = forceTelnetCheckbox;
+    Elements.forceTelnetContainer = forceTelnetContainer;
+  }
+  
+  // Override the connect function to check for force telnet mode
+  const originalConnectToWebSocket = window.connectToWebSocket;
+  window.connectToWebSocket = function(isReconnect = false) {
+    // Call the original function
+    const result = originalConnectToWebSocket(isReconnect);
+    
+    // If connection started and force telnet is checked
+    if (result && forceTelnetCheckbox.checked) {
+      // Enable telnet mode immediately after connection
+      setTimeout(() => {
+        console.log("Forcing telnet mode due to checkbox");
+        if (typeof enableTelnetMode === 'function') {
+          enableTelnetMode();
+        }
+      }, 500);  // Wait for connection to establish
+    }
+    
+    return result;
+  };
+}
+
+// Call this function during initialization
+if (typeof window !== 'undefined') {
+  // Add to window.onload or call it directly
+  window.addEventListener('load', () => {
+    if (typeof setupTelnetEventHandlers === 'function') {
+      setupTelnetEventHandlers();
+    }
+  });
+}

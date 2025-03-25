@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web Terminal</title>
+    <title>Web Terminal with Telnet Support</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,27 +13,30 @@
     
     <!-- Our custom CSS -->
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/telnet.css" />
   </head>
   <body>
-    <h1>Web Terminal</h1>
+    <h1>Web Terminal with Telnet Support</h1>
 
     <!-- Connection form -->
     <div class="connection-form-container">
       <form id="connectionForm" class="connection-form">
         <div class="form-group host">
           <label for="host">Host</label>
-          <input type="text" id="host" value="time.nist.gov" />
+          <input type="text" id="host" value="localhost" />
         </div>
         
         <div class="form-group port">
           <label for="port">Port</label>
-          <input type="text" id="port" value="13" />
+          <input type="text" id="port" value="8023" />
         </div>
 
         <div class="form-group port">
           <label for="proxyPort">Proxy Port</label>
           <input type="text" id="proxyPort" value="8123" />
         </div>
+        
+        <!-- Force Telnet Mode checkbox will be inserted here by JS -->
         
         <div class="button-container">
           <button type="submit" id="connectBtn" class="connect-btn">
@@ -53,6 +56,7 @@
     <div id="statusBar" class="status-bar">
       <div id="status" class="status">Disconnected</div>
       <div id="targetDisplay" class="target-display"></div>
+      <!-- Diagnostic buttons will be inserted here by JS -->
     </div>
 
     <!-- Command input -->
@@ -82,6 +86,11 @@
       </div>
     </div>
 
+    <div class="status-message">
+      <p>Start your telnet server with: <code>uv run python telnet_server/server_launcher.py -c config/echo_server.yaml</code></p>
+      <p>Then connect using localhost:8023 (or whatever port your server is using)</p>
+    </div>
+
     <!-- xterm.js -->
     <script src="https://unpkg.com/xterm@5.1.0/lib/xterm.js"></script>
     <script src="https://unpkg.com/xterm-addon-fit@0.7.0/lib/xterm-addon-fit.js"></script>
@@ -92,6 +101,10 @@
     <script src="js/terminal.js"></script>
     <script src="js/websocket.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/telnet.js"></script>
+    <script src="js/telnet-integration.js"></script>
+    <script src="js/manual-telnet.js"></script>
+    <script src="js/telnet-diagnostics.js"></script>
     <script src="js/events.js"></script>
     <script src="js/main.js"></script>
   </body>
