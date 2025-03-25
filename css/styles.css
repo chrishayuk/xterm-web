@@ -488,6 +488,7 @@ html {
   opacity: 1;
 }
 
+/* Notification styles */
 .terminal-notification {
   position: fixed;
   top: 10px;
@@ -515,4 +516,194 @@ html {
 
 .terminal-notification.warning {
   background-color: #ff9800;
+}
+
+/* css/telnet.css - Enhanced telnet UI styles */
+
+/* Telnet indicator */
+.telnet-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #059669;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Animation for telnet indicator */
+.telnet-indicator.telnet-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Icon styling */
+.indicator-icon, .telnet-icon, .toggle-icon {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+/* Telnet container */
+.telnet-container {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: rgba(31, 41, 55, 0.7);
+  border: 1px solid rgba(31, 41, 55, 0.8);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+/* Telnet container hover effect */
+.telnet-container:hover {
+  background-color: rgba(31, 41, 55, 0.9);
+}
+
+/* Active telnet container */
+.telnet-container.active {
+  background-color: rgba(74, 222, 128, 0.2);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+}
+
+/* Telnet label */
+.telnet-label {
+  margin-left: 8px;
+  font-size: 14px;
+  color: white;
+  font-weight: 500;
+}
+
+/* Telnet toggle button */
+.telnet-mode-toggle {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(31, 41, 55, 0.8);
+  border-radius: 4px;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+/* Toggle button hover effect */
+.telnet-mode-toggle:hover {
+  background-color: rgba(31, 41, 55, 0.8);
+  transform: translateY(-1px);
+}
+
+/* Toggle button active effect */
+.telnet-mode-toggle:active, .telnet-mode-toggle.clicked {
+  transform: scale(0.97);
+}
+
+/* Tooltip for telnet container */
+.telnet-tooltip {
+  position: absolute;
+  top: -30px;
+  left: 0;
+  background-color: #111827;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Show tooltip on hover */
+.telnet-container:hover .telnet-tooltip {
+  opacity: 1;
+}
+
+/* Animation keyframes */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Custom notification styles */
+.terminal-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  z-index: 1000;
+  max-width: 350px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  animation: slideIn 0.3s ease-out forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-notification .notification-icon {
+  font-size: 16px;
+}
+
+.terminal-notification.success {
+  background-color: #059669;
+  border-left: 4px solid #065f46;
+}
+
+.terminal-notification.error {
+  background-color: #dc2626;
+  border-left: 4px solid #991b1b;
+}
+
+.terminal-notification.warning {
+  background-color: #d97706;
+  border-left: 4px solid #92400e;
+}
+
+.terminal-notification.info {
+  background-color: #2563eb;
+  border-left: 4px solid #1d4ed8;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .telnet-container {
+    flex-wrap: wrap;
+  }
+  
+  .telnet-mode-toggle {
+    margin-left: 0;
+    margin-top: 8px;
+  }
 }

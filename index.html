@@ -38,11 +38,8 @@
         
         <div class="form-group ws-path" style="display: none;">
           <label for="wsPath">WebSocket Path</label>
-          <input type="text" id="wsPath" value="/stocks" />
+          <input type="text" id="wsPath" value="/ws" />
         </div>
-        
-        <!-- Connection mode toggle will be inserted here by JS -->
-        <!-- Force Telnet Mode checkbox will be inserted here by JS -->
         
         <div class="button-container">
           <button type="submit" id="connectBtn" class="connect-btn">
@@ -94,7 +91,12 @@
 
     <div class="status-message">
       <p>Start your telnet server with: <code>uv run python telnet_server/server_launcher.py -c config/echo_server.yaml</code></p>
-      <p>Then connect using localhost:8023 (or whatever port your server is using)</p>
+      <p>Choose a connection mode:
+        <ul>
+          <li><strong>Proxy mode:</strong> Connect to the proxy at port 8123, which forwards to your telnet server</li>
+          <li><strong>Direct mode:</strong> Connect directly to your server's WebSocket endpoint at port 8025/ws</li>
+        </ul>
+      </p>
     </div>
 
     <!-- xterm.js -->
@@ -107,12 +109,13 @@
     <script src="js/terminal.js"></script>
     <script src="js/websocket.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/connection-mode.js"></script>
     <script src="js/telnet.js"></script>
     <script src="js/telnet-integration.js"></script>
+    <script src="js/telnet-enhancements.js"></script> <!-- New enhanced telnet UI -->
     <script src="js/manual-telnet.js"></script>
     <script src="js/telnet-diagnostics.js"></script>
     <script src="js/events.js"></script>
-    <script src="js/connection-mode.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
