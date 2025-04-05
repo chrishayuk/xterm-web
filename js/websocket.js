@@ -1,4 +1,4 @@
-// js/websocket.js - WebSocket connection handling with multi-server support
+// js/websocket.js - WebSocket connection handling with multi-server support (subpath version)
 
 // Connection tracking variables
 let connectionTimer = null;
@@ -16,6 +16,7 @@ function connectToWebSocket(isReconnect = false) {
     const proxyPort = isReconnect ? AppState.lastProxyPort : Elements.proxyPortInput.value.trim();
     const useDirectConnection = isReconnect ? AppState.lastUseDirectConnection : 
                               Elements.directConnectionCheckbox ? Elements.directConnectionCheckbox.checked : false;
+
     // Use the wsPath as provided (default: "/ws")
     const wsPath = isReconnect ? AppState.lastWsPath : 
                   Elements.wsPathInput ? Elements.wsPathInput.value.trim() : '/ws';
@@ -36,18 +37,20 @@ function connectToWebSocket(isReconnect = false) {
     // Construct the WebSocket URL based on connection mode
     let wsUrl;
     if (useDirectConnection) {
-      // Direct connection to server's WebSocket endpoint
+      // Direct connection to server's WebSocket endpoint: e.g. ws://host:port/ws
       wsUrl = `ws://${host}:${port}${wsPath}`;
       console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} directly to:`, wsUrl);
     } else {
-      // Connection through WebSocket proxy - use wsPath as provided without adding a trailing slash
-      wsUrl = `ws://localhost:${proxyPort}${wsPath}?target=${encodeURIComponent(host + ":" + port)}`;
-      console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} via proxy to:`, wsUrl);
+      // Subpath approach: e.g. ws://localhost:8125/ws/telehack.com/23
+      // We remove any trailing slash from wsPath first, then add /host/port
+      let normalizedPath = wsPath.endsWith('/') ? wsPath.slice(0, -1) : wsPath;
+      wsUrl = `ws://localhost:${proxyPort}${normalizedPath}/${host}/${port}`;
+      console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} via proxy (subpath) to:`, wsUrl);
     }
     
     // Update UI
     updateStatus(`${isReconnect ? 'Reconnecting' : 'Connecting'}...`, 'connecting');
-    Elements.targetDisplay.textContent = `${host}:${port}${useDirectConnection ? ` (direct${wsPath})` : ' (via proxy)'}`;
+    Elements.targetDisplay.textContent = `${host}:${port}${useDirectConnection ? ` (direct${wsPath})` : ' (via proxy subpath)'}`;
     
     // Always clear terminal on connect/reconnect
     term.clear();
@@ -227,8 +230,6 @@ function handleSocketMessage(e) {
     }
     
     // The actual message handling is delegated to telnet-integration.js
-    // which has overridden the global handleSocketMessage function
-    // But we'll write to terminal directly here as a fallback
     if (!window.handleSocketMessageWithTelnet) {
       console.log("Using fallback message handler");
       term.write(e.data);
@@ -246,7 +247,7 @@ function handleSocketMessage(e) {
 function sendToSocket(data) {
   try {
     if (AppState.socket && AppState.socket.readyState === WebSocket.OPEN) {
-      // If data is a string, convert to binary for telnet
+      // If data is a string, log for debugging
       if (typeof data === 'string') {
         console.log(`Sending text data: ${data.length <= 50 ? data : data.substring(0, 50) + '...'}`);
       } else if (data instanceof Uint8Array) {
@@ -255,8 +256,7 @@ function sendToSocket(data) {
         console.log(`Sending ArrayBuffer (${data.byteLength} bytes)`);
       }
       
-      // Send as-is - the telnet-integration.js module will override this function
-      // with one that has proper telnet protocol handling
+      // Send raw
       AppState.socket.send(data);
       return true;
     }
@@ -274,7 +274,7 @@ function handleReconnect() {
   if (AppState.reconnectAttempts < AppState.maxReconnectAttempts) {
     AppState.reconnectAttempts++;
     
-    // Calculate delay: 1s, 2s, 4s (exponential backoff)
+    // Calculate delay: 1s, 2s, 4s, etc.
     const delay = Math.pow(2, AppState.reconnectAttempts - 1) * 1000;
     
     console.log(`Reconnect attempt ${AppState.reconnectAttempts}/${AppState.maxReconnectAttempts} scheduled in ${delay}ms`);
