@@ -16,6 +16,7 @@ function connectToWebSocket(isReconnect = false) {
     const proxyPort = isReconnect ? AppState.lastProxyPort : Elements.proxyPortInput.value.trim();
     const useDirectConnection = isReconnect ? AppState.lastUseDirectConnection : 
                               Elements.directConnectionCheckbox ? Elements.directConnectionCheckbox.checked : false;
+    // Use the wsPath as provided (default: "/ws")
     const wsPath = isReconnect ? AppState.lastWsPath : 
                   Elements.wsPathInput ? Elements.wsPathInput.value.trim() : '/ws';
     
@@ -39,8 +40,8 @@ function connectToWebSocket(isReconnect = false) {
       wsUrl = `ws://${host}:${port}${wsPath}`;
       console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} directly to:`, wsUrl);
     } else {
-      // Connection through WebSocket proxy
-      wsUrl = `ws://localhost:${proxyPort}/?target=${encodeURIComponent(host + ":" + port)}`;
+      // Connection through WebSocket proxy - use wsPath as provided without adding a trailing slash
+      wsUrl = `ws://localhost:${proxyPort}${wsPath}?target=${encodeURIComponent(host + ":" + port)}`;
       console.log(`${isReconnect ? 'Reconnecting' : 'Connecting'} via proxy to:`, wsUrl);
     }
     
